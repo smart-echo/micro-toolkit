@@ -52,7 +52,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/smart-echo/toolkits/pkg/generator"
+	"github.com/smart-echo/toolkits/pkg/plugin/generator"
 	_ "github.com/smart-echo/toolkits/pkg/plugin/micro"
 	"google.golang.org/protobuf/proto"
 )
