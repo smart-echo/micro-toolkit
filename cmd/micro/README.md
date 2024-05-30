@@ -9,7 +9,7 @@ Micro CLI is the command line interface for developing [Micro][1] projects.
 Installation is done by using the [`go install`][3] command.
 
 ```bash
-go install github.com/smart-echo/toolkits/cmd/micro@latest
+go install github.com/smart-echo/micro-toolkits/cmd/micro@latest
 ```
 
 Let's create a new service using the `new` command.

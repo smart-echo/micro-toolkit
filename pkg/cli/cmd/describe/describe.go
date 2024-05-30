@@ -1,7 +1,7 @@
 package describe
 
 import (
-	mcli "github.com/smart-echo/toolkits/pkg/cli/cmd"
+	mcli "github.com/smart-echo/micro-toolkits/pkg/cli/cmd"
 	"github.com/urfave/cli/v2"
 )
 

@@ -1,4 +1,4 @@
-module github.com/smart-echo/toolkits
+module github.com/smart-echo/micro-toolkits
 
 go 1.22
 

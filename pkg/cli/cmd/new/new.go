@@ -11,9 +11,9 @@ import (
 	"github.com/pkg/errors"
 	"github.com/urfave/cli/v2"
 
-	mcli "github.com/smart-echo/toolkits/pkg/cli/cmd"
-	"github.com/smart-echo/toolkits/pkg/cli/generator"
-	tmpl "github.com/smart-echo/toolkits/pkg/cli/generator/template"
+	mcli "github.com/smart-echo/micro-toolkits/pkg/cli/cmd"
+	"github.com/smart-echo/micro-toolkits/pkg/cli/generator"
+	tmpl "github.com/smart-echo/micro-toolkits/pkg/cli/generator/template"
 )
 
 var flags []cli.Flag = []cli.Flag{

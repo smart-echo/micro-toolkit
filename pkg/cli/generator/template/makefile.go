@@ -7,7 +7,7 @@ var Makefile = `GOPATH:=$(shell go env GOPATH)
 init:
 	@go get -u google.golang.org/protobuf/proto
 	@go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-	@go install github.com/smart-echo/toolkits/cmd/protoc-gen-micro@latest
+	@go install github.com/smart-echo/micro-toolkits/cmd/protoc-gen-micro@latest
 	{{- if .Tern}}
 	@go install github.com/kyleconroy/sqlc/cmd/sqlc@latest
 	{{- end}}
