@@ -6,9 +6,9 @@ import (
 	"os"
 	"strings"
 
-	mcli "github.com/smart-echo/micro-toolkits/pkg/cli/cmd"
-	"github.com/smart-echo/micro-toolkits/pkg/cli/generator"
-	tmpl "github.com/smart-echo/micro-toolkits/pkg/cli/generator/template"
+	mcli "github.com/smart-echo/micro-toolkit/pkg/cli/cmd"
+	"github.com/smart-echo/micro-toolkit/pkg/cli/generator"
+	tmpl "github.com/smart-echo/micro-toolkit/pkg/cli/generator/template"
 	"github.com/urfave/cli/v2"
 )
 

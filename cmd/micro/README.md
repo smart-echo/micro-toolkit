@@ -9,7 +9,7 @@ Micro CLI is the command line interface for developing [Micro][1] projects.
 Installation is done by using the [`go install`][3] command.
 
 ```bash
-go install github.com/smart-echo/micro-toolkits/cmd/micro@latest
+go install github.com/smart-echo/micro-toolkit/cmd/micro@latest
 ```
 
 Let's create a new service using the `new` command.
@@ -605,7 +605,7 @@ $ go-micro stream bidi helloworld Helloworld.BidiStream '{"stroke": 1}' '{"strok
 [3]: https://golang.org/cmd/go/#hdr-Compile_and_install_packages_and_dependencies
 [4]: https://grpc.io/docs/protoc-installation/
 [5]: https://github.com/golang/protobuf/protoc-gen-go
-[6]: https://github.com/smart-echo/micro-toolkits/cmd/protoc-gen-micro
+[6]: https://github.com/smart-echo/micro-toolkit/cmd/protoc-gen-micro
 [7]: https://www.jaegertracing.io/
 [8]: https://github.com/jaegertracing/jaeger-client-go#environment-variables
 [9]: https://skaffold.dev/

@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/smart-echo/micro"
-	mcli "github.com/smart-echo/micro-toolkits/pkg/cli/cmd"
+	mcli "github.com/smart-echo/micro-toolkit/pkg/cli/cmd"
 	"github.com/smart-echo/micro/client"
 	"github.com/urfave/cli/v2"
 )

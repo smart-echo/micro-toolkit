@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sort"
 
-	mcli "github.com/smart-echo/micro-toolkits/pkg/cli/cmd"
+	mcli "github.com/smart-echo/micro-toolkit/pkg/cli/cmd"
 	"github.com/urfave/cli/v2"
 )
 

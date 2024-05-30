@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/fsnotify/fsnotify"
-	mcli "github.com/smart-echo/micro-toolkits/pkg/cli/cmd"
+	mcli "github.com/smart-echo/micro-toolkit/pkg/cli/cmd"
 	"github.com/smart-echo/micro/runtime"
 	"github.com/smart-echo/micro/runtime/local/git"
 	"github.com/urfave/cli/v2"
