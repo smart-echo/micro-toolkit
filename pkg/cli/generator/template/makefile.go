@@ -5,6 +5,7 @@ var Makefile = `GOPATH:=$(shell go env GOPATH)
 
 .PHONY: init
 init:
+	@go install github.com/bufbuild/buf/cmd/buf@latest
 	@go get -u google.golang.org/protobuf/proto
 	@go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 	@go install github.com/smart-echo/micro-toolkit/cmd/protoc-gen-micro@latest
@@ -17,10 +18,8 @@ init:
 
 .PHONY: proto
 proto:
-	@protoc --proto_path=. --micro_out=. --go_out=:. proto/{{.Service}}.proto
-	{{- if .Health}}
-	@protoc --proto_path=. --micro_out=. --go_out=:. proto/health.proto
-	{{end}}
+	@buf dep update
+	@buf generate
 
 .PHONY: update
 update:

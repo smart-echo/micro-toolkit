@@ -173,6 +173,8 @@ func createProject(ctx *cli.Context, pt string) error {
 		{Path: ".gitignore", Template: tmpl.GitIgnore},
 		{Path: "Dockerfile", Template: tmpl.Dockerfile},
 		{Path: "Makefile", Template: tmpl.Makefile},
+		{Path: "buf.yaml", Template: tmpl.BufFile},
+		{Path: "buf.gen.yaml", Template: tmpl.BufGenFile},
 		{Path: "go.mod", Template: tmpl.Module},
 	}
 

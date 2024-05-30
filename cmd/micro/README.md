@@ -22,7 +22,7 @@ Follow the on-screen instructions. Next, we can run the program.
 
 ```bash
 cd helloworld
-make proto tidy
+make init proto tidy
 micro run
 ```
 
@@ -69,7 +69,7 @@ and installing its contents.
 compile the proto file helloworld-new.proto and install dependencies:
 
 cd helloworld-new
-make proto init update tidy
+make init proto update tidy
 ```
 
 To create a new function, use the `micro new function` command. Functions differ
