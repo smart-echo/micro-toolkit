@@ -8,7 +8,12 @@ package {{dehyphen .Service}};
 option go_package = "./proto;{{dehyphen .Service}}";
 
 service {{title .Service}} {
-	rpc Call(CallRequest) returns (CallResponse) {}
+	rpc Call(CallRequest) returns (CallResponse) {
+		option (google.api.http) = {
+			post: "/api/v1/{{dehyphen .Service}}/call";
+			body: "*";
+		};
+	}
 }
 
 message CallRequest {
@@ -27,8 +32,15 @@ package {{dehyphen .Service}};
 
 option go_package = "./proto;{{dehyphen .Service}}";
 
+import "google/api/annotations.proto";
+
 service {{title .Service}} {
-	rpc Call(CallRequest) returns (CallResponse) {}
+	rpc Call(CallRequest) returns (CallResponse) {
+		option (google.api.http) = {
+			post: "/api/v1/{{dehyphen .Service}}/call";
+			body: "*";
+		};
+	}
 	rpc ClientStream(stream ClientStreamRequest) returns (ClientStreamResponse) {}
 	rpc ServerStream(ServerStreamRequest) returns (stream ServerStreamResponse) {}
 	rpc BidiStream(stream BidiStreamRequest) returns (stream BidiStreamResponse) {}

@@ -18,7 +18,7 @@ managed:
   enabled: true
   override:
     - file_option: go_package_prefix
-      value: github.com/bufbuild/buf-tour/gen
+      value: {{.Vendor}}{{.Service}}
   disable:
     - module: buf.build/googleapis/googleapis
       file_option: go_package_prefix
