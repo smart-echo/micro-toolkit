@@ -53,13 +53,12 @@ func main() {
 var MainFNC = `package main
 
 import (
-	"{{.Vendor}}{{.Service}}/handler"
+{{if .Trace}}	"context"
+{{end}}	"{{.Vendor}}{{.Service}}/handler"
 
-{{if .Jaeger}}	ot "github.com/smart-echo/micro-plugins/wrapper/trace/opentracing"
+{{if .Trace}}	ot "github.com/smart-echo/micro-plugins/wrapper/trace/opentelemetry"
 {{end}}	"github.com/smart-echo/micro"
-	"github.com/smart-echo/micro/logger"{{if .Jaeger}}
-
-	"github.com/smart-echo/micro/debug/trace"{{end}}
+	"github.com/smart-echo/micro/logger"
 )
 
 var (
@@ -68,25 +67,26 @@ var (
 )
 
 func main() {
-{{if .Jaeger}}	// Create tracer
-	tracer, closer, err := jaeger.NewTracer(
-		jaeger.Name(service),
-		jaeger.FromEnv(true),
-		jaeger.GlobalTracer(true),
-	)
+{{if .Trace}}	// Create tracer
+	tp, err := initTracerProvider(service, version)
 	if err != nil {
-		logger.Fatal(err)
+		logger.Fatal("failed to initial tracer provider: %v", err)
 	}
-	defer closer.Close()
+	traceOpts := ot.WithTraceProvider(tp)
+	defer func(ctx context.Context) {
+		if err := tp.Shutdown(ctx); err != nil {
+			logger.Infof("error shutting down the tracer provider: %v", err)
+		}
+	}(context.Background())
 
 {{end}}	// Create function
 	fnc := micro.NewFunction(
 		micro.Name(service),
 		micro.Version(version),
-{{if .Jaeger}}		micro.WrapCall(ot.NewCallWrapper(tracer)),
-		micro.WrapClient(ot.NewClientWrapper(tracer)),
-		micro.WrapHandler(ot.NewHandlerWrapper(tracer)),
-		micro.WrapSubscriber(ot.NewSubscriberWrapper(tracer)),
+{{if .Trace}}		micro.WrapCall(ot.NewCallWrapper(traceOpts)),
+		micro.WrapClient(ot.NewClientWrapper(traceOpts)),
+		micro.WrapHandler(ot.NewHandlerWrapper(traceOpts)),
+		micro.WrapSubscriber(ot.NewSubscriberWrapper(traceOpts)),
 {{end}}	)
 	fnc.Init()
 
@@ -104,22 +104,16 @@ func main() {
 var MainSRV = `package main
 
 import (
-{{- if .Advanced}}
 	"context"
 	"sync"
-{{- end}}
 
 	"{{.Vendor}}{{.Service}}/handler"
 	pb "{{.Vendor}}{{.Service}}/proto"
 
-{{if .Jaeger}}	ot "github.com/smart-echo/micro-plugins/wrapper/trace/opentracing"
+{{if .Trace}}	ot "github.com/smart-echo/micro-plugins/wrapper/trace/opentelemetry"
 {{end}}	"github.com/smart-echo/micro"
-	"github.com/smart-echo/micro/logger"{{if .Jaeger}}
-{{- if .Advanced}}
+	"github.com/smart-echo/micro/logger"
 	"github.com/smart-echo/micro/server"
-{{- end}}
-
-	"github.com/smart-echo/micro/debug/trace"{{end}}
 {{if .GRPC}}
 	grpcc "github.com/smart-echo/micro-plugins/client/grpc"
 	grpcs "github.com/smart-echo/micro-plugins/server/grpc"
@@ -132,20 +126,20 @@ var (
 )
 
 func main() {
-{{if .Jaeger}}	// Create tracer
-	tracer, closer, err := jaeger.NewTracer(
-		jaeger.Name(service),
-		jaeger.FromEnv(true),
-		jaeger.GlobalTracer(true),
-	)
-	if err != nil {
-		logger.Fatal(err)
-	}
-	defer closer.Close()
-{{ if .Advanced }}
 	wg := sync.WaitGroup{}
 	ctx, cancel := context.WithCancel(context.Background())
-{{- end }}
+
+{{if .Trace}}	// Create tracer
+	tp, err := initTracerProvider(service, version)
+	if err != nil {
+		logger.Fatal("failed to initial tracer provider: %v", err)
+	}
+	traceOpts := ot.WithTraceProvider(tp)
+	defer func(ctx context.Context) {
+		if err := tp.Shutdown(ctx); err != nil {
+			logger.Infof("error shutting down the tracer provider: %v", err)
+		}
+	}(ctx)
 
 {{end}}	// Create service
 	srv := micro.NewService(
@@ -153,7 +147,6 @@ func main() {
 		micro.Server(grpcs.NewServer()),
 		micro.Client(grpcc.NewClient()),
 {{- end}}
-{{- if .Advanced}}
 		micro.BeforeStart(func() error {
 			logger.Infof("Starting service %s", service)
 			return nil
@@ -167,23 +160,21 @@ func main() {
 			wg.Wait()
 			return nil
 		}),
-{{- end}}
-{{if .Jaeger}}		micro.WrapCall(ot.NewCallWrapper(tracer)),
-		micro.WrapClient(ot.NewClientWrapper(tracer)),
-		micro.WrapHandler(ot.NewHandlerWrapper(tracer)),
-		micro.WrapSubscriber(ot.NewSubscriberWrapper(tracer)),
+{{if .Trace}}		micro.WrapCall(ot.NewCallWrapper(traceOpts)),
+		micro.WrapClient(ot.NewClientWrapper(traceOpts)),
+		micro.WrapHandler(ot.NewHandlerWrapper(traceOpts)),
+		micro.WrapSubscriber(ot.NewSubscriberWrapper(traceOpts)),
 {{end}}	)
 	srv.Init(
 		micro.Name(service),
 		micro.Version(version),
 	)
-{{- if .Advanced}}
+
 	srv.Server().Init(
 		server.Wait(&wg),
 	)
 
 	ctx = server.NewContext(ctx, srv.Server())
-{{- end}}
 
 	// Register handler
 	if err := pb.Register{{title .Service}}Handler(srv.Server(), new(handler.{{title .Service}})); err != nil {

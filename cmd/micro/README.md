@@ -92,40 +92,14 @@ cd test-func
 make init proto update tidy
 ```
 
-### Jaeger
+### Trace
 
-To create a new service with [Jaeger][7] integration, pass the `--jaeger` flag
+To create a new service with [OpenTelemetry][7] integration, pass the `--trace` flag
 to the `micro new service` or `micro new function` commands. You may configure
-the Jaeger client using [environment variables][8].
+the OpenTelemetry client using [environment variables][8].
 
 ```bash
-micro new service --jaeger helloworld
-```
-
-You may invoke `trace.NewSpan(context.Context).Finish()` to nest spans. For
-example, consider the following handler implementing a greeter.
-
-`handler/helloworld.go`
-
-```go
-package helloworld
-
-import (
-    "context"
-
-    "github.com/smart-echo/micro/logger"
-
-    "helloworld/greeter"
-    pb "helloworld/proto"
-)
-
-type Helloworld struct{}
-
-func (e *Helloworld) Call(ctx context.Context, req pb.CallRequest, rsp *pb.CallResponse) error {
-    logger.Infof("Received Helloworld.Call request: %v", req)
-    rsp.Msg = greeter.Greet(ctx, req.Name)
-    return nil
-}
+micro new service --trace helloworld
 ```
 
 `greeter/greeter.go`
@@ -349,27 +323,13 @@ This implies the `--kubernetes` flag.
 micro new service --skaffold helloworld
 ```
 
-### Advanced
-
-Some patterns will often occur in more complex services. Such as the need to 
-gracefully shutdown go routines, and pass down a context to provide the cancelation  
-signal.
-
-To prevent you from having to rewrite them for every service, you can pass the 
-`--advanced` flag. This will generate a waitgroup, context, and define functions
-for `BeforeStart`, `BeforeStop` and `AfterStop`.
-
-```bash
-micro new service --advanced helloworld
-```
-
 ### Complete
 
 With so many possible flags to create a service, the `--complete` flag will
 set the following flags to true:
 
 ```bash
-micro new service --jaeger --health --grpc --sqlc --tern --buildkit --kustomize --tilt --advanced
+micro new service --trace --health --grpc --sqlc --tern --buildkit --kustomize --tilt
 ```
 
 ## Running A Service

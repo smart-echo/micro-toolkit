@@ -5,6 +5,9 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
+
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // Generator is the interface that generates project template files.
@@ -68,7 +71,8 @@ func (g *generator) Generate(files []File) error {
 			},
 			"lower": strings.ToLower,
 			"title": func(s string) string {
-				t := strings.ReplaceAll(strings.Title(s), "-", "")
+				caser := cases.Title(language.English)
+				t := strings.ReplaceAll(caser.String(s), "-", "")
 				return strings.ReplaceAll(t, "_", "")
 			},
 		}

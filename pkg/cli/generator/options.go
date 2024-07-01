@@ -12,8 +12,8 @@ type Options struct {
 
 	// Client determines whether or not the project is a client project.
 	Client bool
-	// Jaeger determines whether or not Jaeger integration is enabled.
-	Jaeger bool
+	// Trace determines whether or not Trace integration is enabled.
+	Trace bool
 	// Skaffold determines whether or not Skaffold integration is enabled.
 	Skaffold bool
 	// Tilt determines whether or not Tilt integration is enabled.
@@ -30,8 +30,6 @@ type Options struct {
 	Buildkit bool
 	// Tern directory whether or not Tern integration is enabled.
 	Tern bool
-	// Advanced directory whether or not Advanced integration is enabled.
-	Advanced bool
 	// PrivateRepo
 	PrivateRepo bool
 	// Namespace sets the default namespace
@@ -71,10 +69,10 @@ func Client(c bool) Option {
 	}
 }
 
-// Jaeger sets whether or not Jaeger integration is enabled.
-func Jaeger(j bool) Option {
+// Trace sets whether or not Trace integration is enabled.
+func Trace(t bool) Option {
 	return func(o *Options) {
-		o.Jaeger = j
+		o.Trace = t
 	}
 }
 
@@ -131,13 +129,6 @@ func Buildkit(s bool) Option {
 func Tern(s bool) Option {
 	return func(o *Options) {
 		o.Tern = s
-	}
-}
-
-// Advanced determines whether or not Advanced integration is enabled.
-func Advanced(s bool) Option {
-	return func(o *Options) {
-		o.Advanced = s
 	}
 }
 

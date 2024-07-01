@@ -18,8 +18,8 @@ import (
 
 var flags []cli.Flag = []cli.Flag{
 	&cli.BoolFlag{
-		Name:  "jaeger",
-		Usage: "Generate Jaeger tracer files",
+		Name:  "trace",
+		Usage: "Generate OpenTelemetry tracer files",
 	},
 	&cli.BoolFlag{
 		Name:  "kubernetes",
@@ -58,10 +58,6 @@ var flags []cli.Flag = []cli.Flag{
 		Usage: "Generate tern resouces; sql migrations templates",
 	},
 	&cli.BoolFlag{
-		Name:  "advanced",
-		Usage: "Generate advanced features in main.go server file",
-	},
-	&cli.BoolFlag{
 		Name:  "privaterepo",
 		Usage: "Amend Dockerfile to build from private repositories (add ssh-agent)",
 	},
@@ -77,7 +73,7 @@ var flags []cli.Flag = []cli.Flag{
 	},
 	&cli.BoolFlag{
 		Name:  "complete",
-		Usage: "Complete will set the following flags to true; jaeger, health, grpc, sqlc, tern, kustomize, tilt, advanced",
+		Usage: "Complete will set the following flags to true; trace, health, grpc, sqlc, tern, kustomize, tilt",
 	},
 }
 
@@ -153,7 +149,7 @@ func createProject(ctx *cli.Context, pt string) error {
 		generator.Vendor(vendor),
 		generator.Directory(dir),
 		generator.Client(client),
-		generator.Jaeger(ctx.Bool("jaeger") || ctx.Bool("complete")),
+		generator.Trace(ctx.Bool("trace") || ctx.Bool("complete")),
 		generator.Skaffold(ctx.Bool("skaffold")),
 		generator.Tilt(ctx.Bool("tilt") || ctx.Bool("complete")),
 		generator.Health(ctx.Bool("health") || ctx.Bool("complete")),
@@ -162,7 +158,6 @@ func createProject(ctx *cli.Context, pt string) error {
 		generator.GRPC(ctx.Bool("grpc") || ctx.Bool("health") || ctx.Bool("complete")),
 		generator.Buildkit(ctx.Bool("buildkit") || ctx.Bool("privaterepo") || ctx.Bool("complete")),
 		generator.Tern(ctx.Bool("tern") || ctx.Bool("complete")),
-		generator.Advanced(ctx.Bool("advanced") || ctx.Bool("complete")),
 		generator.PrivateRepo(ctx.Bool("privaterepo")),
 		generator.Namespace(ctx.String("namespace")),
 		generator.PostgresAddress(ctx.String("postgresaddress")),
@@ -178,6 +173,8 @@ func createProject(ctx *cli.Context, pt string) error {
 		{Path: "go.mod", Template: tmpl.Module},
 	}
 
+	var backend bool
+
 	switch pt {
 	case "client":
 		files = append(files, []generator.File{
@@ -189,17 +186,25 @@ func createProject(ctx *cli.Context, pt string) error {
 			{Path: "main.go", Template: tmpl.MainFNC},
 			{Path: "proto/" + name + ".proto", Template: tmpl.ProtoFNC},
 		}...)
+		backend = true
 	case "service":
 		files = append(files, []generator.File{
 			{Path: "handler/" + name + ".go", Template: tmpl.HandlerSRV},
 			{Path: "main.go", Template: tmpl.MainSRV},
 			{Path: "proto/" + name + ".proto", Template: tmpl.ProtoSRV},
 		}...)
+		backend = true
 	default:
 		return fmt.Errorf("%s project type not supported", pt)
 	}
 
 	opts := g.Options()
+	if opts.Trace && backend {
+		files = append(files, []generator.File{
+			{Path: "tracing.go", Template: tmpl.TRACE},
+		}...)
+	}
+
 	if opts.Sqlc {
 		files = append(files, []generator.File{
 			{Path: "postgres/sqlc.yaml", Template: tmpl.Sqlc},
